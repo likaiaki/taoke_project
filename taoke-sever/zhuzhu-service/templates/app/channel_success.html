@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>升级成功</title>
+    <style>
+        .main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            height: 48px;
+            font-size: 25px;
+            font-family: SourceHanSansCN-Medium;
+            font-weight: bold;
+            color: rgba(255, 58, 96, 1);
+            line-height: 48px;
+        }
+
+
+        .image {
+            width: 61.39%;
+            margin-top: 20px;
+        }
+
+        .image > img {
+            width: 100%;
+            height: auto;
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .tips {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 40px;
+        }
+
+        .tips > span {
+            font-size: 16px;
+            font-family: SourceHanSansCN-Regular;
+            font-weight: 400;
+            color: rgba(126, 129, 133, 1);
+            line-height: 16px;
+        }
+
+        .button {
+            margin-top: 45px;
+            padding: 1.72vh 37.78vw;
+            background-color: #FF5961;
+            border-radius: 100px;
+            font-size: 16px;
+            font-family: PingFangSC-Regular;
+            color: rgba(255, 255, 255, 1);
+        }
+
+    </style>
+</head>
+<body>
+<div class="main">
+    <div class="title">恭喜您，升级为高级会员</div>
+    <div class="image">
+        <img src="/static/img/gift.png">
+    </div>
+    <div class="tips">
+        <span>快去开通邀请好友吧</span>
+    </div>
+
+    <div class="button" onclick="gohome()">确定</div>
+
+</div>
+
+<script type="text/javascript">
+    function gohome() {
+        window.android.gohome();
+    }
+</script>
+</body>
+</html>

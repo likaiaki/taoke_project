@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab-item layui-show">
+                    <table id="table"></table>
+                </div>
+            </div>
+        </div>
+        <!--数据表格结束-->
+    </div>
+
+</div>
+<script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+
+<script>
+    layui.use(['table', 'form', 'upload'], function () {
+        let $ = layui.$;
+        let layer = layui.layer;
+        let table = layui.table;
+
+        let dic = {
+            id: 'table',
+            elem: '#table',
+            url: '/god/invite',
+            limit: 15,
+            page: true,
+            limits: [10, 15, 30, 50, 100],
+            cols: [[
+                {title: '', width: 40, type: 'checkbox', fixed: 'left'},
+                {field: '_id', title: 'id', width: 220, align: 'center',},
+                {field: 'nickname', title: '昵称', align: 'center'},
+                {field: 'invite_nickname', title: '邀请者', align: 'center'},
+                {field: 'use_invite_code', title: '邀请者邀请码', align: 'center',},
+                {field: 'invite_code', title: '用户邀请码', align: 'center',},
+                {
+                    field: 'atime', title: '邀请时间', align: 'center', templet: function (d) {
+                        return new Date(d.atime * 1000).toLocaleString();
+                    }
+                },
+                {
+                    field: 'invite_time', title: '邀请时间', align: 'center', templet: function (d) {
+                        return d.invite_time ? new Date(d.invite_time * 1000).toLocaleString() : "";
+                    }
+                },
+            ]],
+        };
+        table.render(dic);
+
+    });
+</script>

@@ -1,0 +1,175 @@
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab-item layui-show">
+                    <div id="toolbar">
+                        <button id="refresh-btn" class="layui-btn">刷新 <i class="layui-icon">&#xe669;</i></button>
+                        <button id="add-btn" class="layui-btn layui-btn-normal">添加 <i class="layui-icon">&#xe654;</i>
+                        </button>
+                        <button id="del-btn" disabled="disabled"
+                                class="must-select layui-btn layui-btn-danger layui-btn-disabled">
+                            删除 <i class="layui-icon">&#xe640;</i>
+                        </button>
+                    </div>
+                    <table id="table"></table>
+                </div>
+            </div>
+        </div>
+        <!--数据表格结束-->
+    </div>
+    <div id="model" style="display: none;padding:20px 50px 0 10px">
+        <form id="form" class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" class="layui-input" title="id">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">专区名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" required lay-verify="required"
+                           class="layui-input" autofocus="autofocus">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">物料ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="material_id" required lay-verify="required"
+                           class="layui-input" autofocus="autofocus">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">图标</label>
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" id="img">
+                        <i class="layui-icon">&#xe67c;</i>上传图标
+                    </button>
+                    <input type="text" name="img" class="layui-input layui-hide">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">位置</label>
+                <div class="layui-input-block">
+                    <select id="position_select" name="position" lay-search="" lay-filter="position_select">
+                        <option value="0">精选</option>
+                        <option value="1">推荐</option>
+                        <option value="2">精选+推荐</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit lay-filter="submit" class="layui-btn">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+
+<script>
+    layui.use(['table', 'form', 'upload'], function () {
+        let $ = layui.$;
+        let layer = layui.layer;
+        let form = layui.form;
+        let table = layui.table;
+        let upload = layui.upload;
+
+
+        let dic = {
+            id: 'table',
+            elem: '#table',
+            url: '/god/zone',
+            limit: 15,
+            page: true,
+            limits: [10, 15, 30, 50, 100],
+            cols: [[
+                {type: 'checkbox', width: 40, fixed: 'left'},
+                {field: 'id', title: 'id', width: 220, align: 'center',},
+                {
+                    field: 'name', title: '专区名称', align: 'center'
+                },
+                {
+                    field: 'material_id', title: '物料ID', align: 'center'
+                },
+                {
+                    field: 'img', title: '图标', align: 'center', templet: function (d) {
+                        return '<img style="height: 28px" src="' + (d.img || 'http://file.17gwx.com/sqkb/element/2018/09/15/146435b9cc1b1c21ed.jpg') + '" alt="' + d.name + '">'
+                    }
+                },
+                {
+                    field: 'position', title: '位置', align: 'center', templet: function (d) {
+                        let position = ['精选', '推荐', '精选+推荐'];
+                        return position[d.position];
+                    }
+                },
+                {
+                    title: '', width: 98, fixed: 'right', type: 'button', templet: function (d) {
+                        return "<button data-item='" + JSON.stringify(d) + "' class='layui-btn layui-btn-sm edit-btn'>编辑</button>";
+                    }
+                }
+            ]],
+            done: function () {
+                update_button($, table);
+            }
+        };
+
+        title = '专区';
+        url = '/god/zone';
+        init($, layer, form, table, upload, dic);
+        let instance = table.render(dic);
+
+        upload.render({
+            elem: '#img',
+            url: qiniu_host,
+            auto: false,
+            data: {
+                key: () => {
+                    return $("#img").data("key");
+                },
+                token: () => {
+                    return $("#img").data("token");
+                }
+            },
+            choose: function (obj) {
+                loading = layer.load(2, {time: 10 * 1000});
+                $.ajax({
+                    url: '/god/token',
+                    data: {
+                        id: $('#model').find("input[name='id']").val() || "",
+                        type: 'zone'
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        $('#model').find("[name='id']").val(res.data.id);
+                        console.log($('#img').data('key'), $('#img').data('token'));
+                        $('#img').attr({'data-key': res.data.key, 'data-token': res.data.token});
+                        $('#img').data('key',res.data.key);
+                        $('#img').data('token',res.data.token);
+                        console.log($('#img').data('key'), $('#img').data('token'));
+                        obj.preview(function (index, file, result) {
+                            obj.upload(index, file);
+                        });
+                    }
+                });
+            },
+            done: function (res, index, upload) {
+                $("#model").find("[name='img']").val(res.key);
+                layer.close(loading);
+                layer.msg("上传成功！", {icon: 1});
+            },
+            error: function (index, upload) {
+                layer.close(loading);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,240 @@
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+
+<style>
+    .layui-input {
+        display: inline;
+        width: min-content;
+    }
+
+    .layui-form-select {
+        width: 200px;
+        display: inline-block;
+    }
+
+    .filter-item {
+        margin: 10px 0;
+    }
+
+    .layui-form-item {
+        width: auto;
+        display: inline-block;
+    }
+
+    .search-type {
+        float: left;
+        display: block;
+        padding: 0;
+        font-weight: 400;
+        line-height: 20px;
+        width: 110px;
+    }
+
+    .search-type > .layui-form-select {
+        width: 110px;
+    }
+
+    .search-type .layui-input {
+        width: 110px;
+    }
+
+    .layui-input-block {
+        margin-left: 0 !important;
+    }
+
+    a {
+        color: dodgerblue;
+        cursor: pointer;
+        margin: auto 5px;
+    }
+</style>
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab-item layui-show">
+                    <div id="toolbar">
+                        <form id="filter" class="layui-form layui-form-pane " action="" style="display: inline-block">
+                            <div class="filter-item">
+                                <label>创建日期:</label>
+                                <input type="text" class="layui-input" id="create_start">
+                                <span> 至 </span>
+                                <input type="text" class="layui-input" id="create_stop">
+                                <a class="many-days" data-day="7" data-type="create">最近7天</a>
+                                <a class="many-days" data-day="30" data-type="create">最近30天</a>
+                                <a class="many-days" data-day="90" data-type="create">最近90天</a>
+                            </div>
+                            <div class="filter-item">
+                                <label>结算日期:</label>
+                                <input type="text" class="layui-input" id="complete_start">
+                                <span> 至 </span>
+                                <input type="text" class="layui-input" id="complete_stop">
+                                <a class="many-days" data-day="7" data-type="complete">最近7天</a>
+                                <a class="many-days" data-day="30" data-type="complete">最近30天</a>
+                                <a class="many-days" data-day="90" data-type="complete">最近90天</a>
+                            </div>
+
+                            <div class="filter-item">
+                                <label>佣金类型:</label>
+                                <select id="type" name="type" lay-search="" lay-filter="type_select">
+                                    <option value="">全部</option>
+                                    <option value="shopping">购买返佣</option>
+                                    <option value="share">推广返佣</option>
+                                    <option value="subordinate">下级返佣</option>
+                                </select>
+                                <label style="margin-left: 30px">订单类型:</label>
+                                <select name="type" lay-search="" lay-filter="status_select">
+                                    <option value="">全部</option>
+                                    <option value="create">已付款</option>
+                                    <option value="complete">已结算</option>
+                                    <option value="fail">已失效</option>
+                                    <option value="pay">已成功</option>
+                                </select>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="search-type">
+                                    <select name="search" lay-verify="required">
+                                        <option value="name">姓名</option>
+                                        <option value="tel">手机号</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-block" style="display: inline-block">
+                                    <input id="key" name="key" type="text" placeholder="请输入搜索内容" class="layui-input"
+                                           style="width: 300px;">
+                                </div>
+                                <button class="layui-btn" lay-submit lay-filter="filter">确定</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <table id="table"></table>
+                </div>
+            </div>
+        </div>
+        <!--数据表格结束-->
+    </div>
+</div>
+<script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+
+<script>
+    layui.use(['table', 'form', 'laydate'], function () {
+        let $ = layui.$;
+        let layer = layui.layer;
+        let laydate = layui.laydate;
+        let form = layui.form;
+        let table = layui.table;
+        let type = '', status = '';
+
+        let dic = {
+            id: 'table',
+            elem: '#table',
+            url: '/god/commission',
+            limit: 15,
+            page: true,
+            where: {
+                commission_type: () => {
+                    return type;
+                },
+                status: () => {
+                    return status
+                },
+                name: () => {
+                    if ($("select[name='search']").val() === "name") {
+                        return $("input[name='key']").val()
+                    }
+                    return ''
+                },
+                tel: () => {
+                    if ($("select[name='search']").val() === "tel") {
+                        return $("input[name='key']").val()
+                    }
+                    return ''
+                },
+                create_start: () => {
+                    let time = $("#create_start").val();
+                    return time ? parseInt(new Date(time).getTime() / 1000) : ''
+                },
+                create_stop: () => {
+                    let time = $("#create_stop").val();
+                    return time ? parseInt(new Date(time).getTime() / 1000) : ''
+                },
+                complete_start: () => {
+                    let time = $("#complete_start").val();
+                    return time ? parseInt(new Date(time).getTime() / 1000) : ''
+                },
+                complete_stop: () => {
+                    let time = $("#complete_stop").val();
+                    return time ? parseInt(new Date(time).getTime() / 1000) : ''
+                },
+            },
+            limits: [10, 15, 30, 50, 100],
+            cols: [[
+                {field: '_id', title: 'id', width: 220, align: 'center',},
+                {field: 'nickname', title: '用户', align: 'center'},
+                {field: 'pub_share_pre_fee', title: '返佣金额', width: 100, align: 'center'},
+                {
+                    field: 'commission_type', title: '佣金类型', width: 100, align: 'center', templet: function (d) {
+                        return {shopping: '购买返佣', share: '推广返佣', subordinate: '下级返佣'}[d.commission_type] || "";
+                    }
+                },
+                {
+                    field: 'create_time', title: '创建时间', align: 'center', templet: function (d) {
+                        return d.create_time ? new Date(d.create_time * 1000).toLocaleString() : '';
+                    }
+                },
+                {
+                    field: 'complete_time', title: '结算时间', align: 'center', templet: function (d) {
+                        return d.complete_time ? new Date(d.complete_time * 1000).toLocaleString() : '';
+                    }
+                },
+                {
+                    field: 'status', title: '订单类型', align: 'center', width: 100, templet: function (d) {
+                        return {create: '已付款', complete: "已结算", fail: '已失效', pay: '已成功'}[d.status] || "";
+                    }
+                },
+                {
+                    title: '', width: 98, fixed: 'right', type: 'button', templet: function (d) {
+                        return "<button data-item='" + JSON.stringify(d) + "' class='layui-btn layui-btn-sm " + (d.status ? "layui-btn-disabled" : "finish-btn") + "'>已完成</button>";
+                    }
+                }
+            ]]
+        };
+
+        let instance = table.render(dic);
+        form.on('submit(filter)', function (data) {
+            table.render(dic);
+            return false;
+        });
+        form.on('select(type_select)', function (data) {
+            type = data.value;
+        });
+        form.on('select(status_select)', function (data) {
+            status = data.value;
+        });
+        laydate.render({
+            elem: '#create_start' //指定元素
+        });
+        laydate.render({
+            elem: '#create_stop' //指定元素
+        });
+        laydate.render({
+            elem: '#complete_start' //指定元素
+        });
+        laydate.render({
+            elem: '#complete_stop' //指定元素
+        });
+        $(".many-days").on('click', function (e) {
+            let day = parseInt($(this).data('day'));
+            let type = $(this).data('type');
+            let today = new Date();
+            $('#' + type + '_stop').val(format(today));
+            let start = new Date(today.setDate(today.getDate() - day));
+            $('#' + type + '_start').val(format(start));
+        });
+        let format = function (date) {
+            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+        }
+
+    });
+</script>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>首页 - 速诺后台</title>
+    <link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+</head>
+<body>
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">速诺后台</div>
+        <ul class="layui-nav layui-layout-left">
+            <li top-bar top-id="1" class="layui-nav-item"><a href="javascript:;">猪猪省钱</a></li>
+        </ul>
+
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <ul left-bar left-id="1" class="layui-nav layui-nav-tree" lay-filter="left-nav"
+                style="border-radius: 0;">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/analysis.html" data-id="11" tab-item>
+                        统计信息
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/commission.html" data-id="12" tab-item>
+                        佣金配置
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/channel.html" data-id="13" tab-item>
+                        渠道管理
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/invite.html" data-id="14" tab-item>
+                        邀请管理
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/rebate.html" data-id="15" tab-item>
+                        返佣统计
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/zone.html" data-id="16" tab-item>
+                        专区管理
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/level1.html" data-id="17" tab-item>
+                        一级类目
+                    </a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;" data-url="/static/zhuzhu/level2.html" data-id="18" tab-item>
+                        二级类目
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主体 -->
+    <div class="layui-body">
+        <!-- 顶部切换卡 -->
+        <div class="layui-tab layui-tab-brief" lay-filter="top-tab" lay-allowClose="true" style="margin: 0;">
+            <ul class="layui-tab-title"></ul>
+            <div class="layui-tab-content" style="padding: 0;"></div>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <div class="layui-footer" style="text-align: center; line-height: 44px;">
+        Copyright © 2017 <a href="http://mumbai.cat" target="_blank">Benthink</a> Powered by Dust
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['element'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        var tabfilter = 'top-tab';
+        var tab = $('.layui-tab[lay-filter=' + tabfilter + ']').eq(0);
+        var tabcontent = tab.children('.layui-tab-content').eq(0);
+        var tabtitle = tab.children('.layui-tab-title').eq(0);
+
+        function ani(id) {
+            $("[iframe-id=" + id + "]").hide();
+            $("[iframe-id=" + id + "]").fadeIn(127);
+        }
+
+        $(window).resize(function () {
+            //设置顶部切换卡容器度
+            tabcontent.height($(this).height() - 60 - 41 - 44 - 3); //头部高度 顶部切换卡高度 底部高度
+            //设置顶部切换卡容器内每个iframe高度
+            tabcontent.find('iframe').each(function () {
+                $(this).height(tabcontent.height());
+            });
+        }).resize();
+
+        // 监听Tab切换，以改变地址hash值
+        element.on('tab(' + tabfilter + ')', function () {
+            let id;
+            try {
+                id = this.getAttribute('lay-id');
+            } catch (e) {
+                id = null;
+            }
+            if (id != null) {
+                location.hash = tabfilter + '=' + id;
+                ani(id);
+            }
+        });
+
+        // 点击左侧链接的时候
+        $('[tab-item]').bind('click', function () {
+            var id = $(this).attr('data-id');
+            var title = $(this).text();
+            var url = $(this).attr('data-url');
+
+            var iframes = $("[lay-id=" + id + "]").length;
+            if (iframes === 0) {
+                // 不存在的情况
+                var iframe = '<iframe';
+                iframe += ' src="' + url + '" iframe-id="' + id + '"';
+                iframe += ' style="width: 100%; height: ' + tabcontent.height() + 'px; border: 0px;"';
+                iframe += '></iframe>';
+                //顶部切换卡新增一个卡片
+                element.tabAdd(tabfilter, {'title': title, 'content': iframe, 'id': id});
+                ani(id);
+            }
+            // 添加记录
+            location.hash = tabfilter + '=' + id;
+            // 改变tab
+            element.tabChange(tabfilter, id);
+        });
+
+        // 顶部导航选择时
+        $('[top-bar]').bind('click', function () {
+            var id = $(this).attr('top-id');
+            var lefts = $("[left-bar][left-id='" + id + "']").length;
+            if (lefts !== 0) {
+                // top-bar有对应的left-bar的情况下
+                $("[left-bar]").hide();
+                $("[left-bar][left-id='" + id + "']").fadeIn(500);
+            }
+        });
+
+        /**
+         * 初始化点击侧边栏导航
+         */
+        var layid = location.hash.replace(/^#top-tab=/, '');
+        // layui-this
+        if (layid) {
+            console.log(layid, layid.substr(0, 1));
+            $('.layui-layout-left').find('[top-id="' + layid.substr(0, 1) + '"]>a').eq(0).click();
+            $('.layui-side-scroll').find('[data-id=' + layid + ']').eq(0).click();    // 根据传入的ID跳转
+        } else {
+            $('.layui-side-scroll').find('[data-url][data-id]').eq(0).click();    // 点击第一个
+        }
+
+    });
+</script>
+</body>
+</html>

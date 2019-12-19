@@ -1,0 +1,31 @@
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div id="user-incr-line" style="height: 300px"></div>
+                <div id="task-done-line" style="height: 300px"></div>
+                <!--<div id="task-buys-line" style="height: 300px"></div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    $.get('/likes/analysis', function (res) {
+        var user_incr_line = document.getElementById("user-incr-line");
+        let user_incr_chart = echarts.init(user_incr_line);
+        user_incr_chart.setOption(res.data.user_incr, true);
+
+        var task_done_line = document.getElementById("task-done-line");
+        let task_done_chart = echarts.init(task_done_line);
+        task_done_chart.setOption(res.data.task_done, true);
+
+        // var task_buys_line = document.getElementById("task-buys-line");
+        // let task_buys_chart = echarts.init(task_buys_line);
+        // task_buys_chart.setOption(res.data.task_buys, true);
+    });
+
+</script>

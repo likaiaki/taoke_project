@@ -1,0 +1,181 @@
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+
+<style>
+    .layui-form-label {
+        min-width: 200px;
+        text-align: right !important;
+        border: 0 !important;
+        background-color: rgba(0, 0, 0, 0) !important;
+    }
+
+    .layui-form-pane .layui-input-block {
+        margin-left: 200px;
+        margin-right: 20px;
+    }
+
+    .unit {
+        float: right;
+        min-height: 38px;
+        line-height: 38px;
+    }
+
+    .layui-input {
+        display: inline-block;
+        text-align: right;
+    }
+</style>
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>设置佣金比例</legend>
+                </fieldset>
+            </div>
+
+            <div class="layui-card-body">
+                <blockquote class="layui-elem-quote layui-quote-nm">请设置佣金比例 <a id="desc" style="color: #3595CC"
+                                                                               href="#">佣金说明</a></blockquote>
+                <div style="width: 300px;margin: auto">
+                    <form id="form" class="layui-form layui-form-pane" action="">
+
+                        <div class="layui-form-item" style="display: none">
+                            <label class="layui-form-label">ID</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="id" class="layui-input" title="id">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" id="label1" data-tip="会员返佣比例：平台会员购买平台商品获得的返佣比例">会员返佣比例</label>
+                            <div class="unit">%</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="user_v" required lay-verify="required" autocomplete="off"
+                                       oninput="if(value>100)value=100;if(value<0)value=0"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" id="label2"
+                                   data-tip="非高级会员返佣比例：平台会员申请成为高级会员但不是高级会员之前购买平台商品获得的返佣比例">非高级会员返佣比例</label>
+                            <div class="unit">%</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="user_nc_v" required lay-verify="required"
+                                       oninput="if(value>100)value=100;if(value<0)value=0"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" id="label3"
+                                   data-tip="高级会员返佣比例：平台高级会员购买平台商品后获得的返佣比例；">高级会员购买返佣比例</label>
+                            <div class="unit">%</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="user_c" required lay-verify="required"
+                                       oninput="if(value>100)value=100;if(value<0)value=0"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" id="label5"
+                                   data-tip="高级会员分享返佣比例：平台高级会员分享平台商品链接给到非平台会员购买后，高级会员获得的返佣比例；">高级会员分享返佣比例</label>
+                            <div class="unit">%</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="user_v_c_s" required lay-verify="required"
+                                       oninput="if(value>100)value=100;if(value<0)value=0"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" id="label4"
+                                   data-tip="高级会员下线提成比例：平台高级会员邀请另一个高级会员成为下线后，下线购买商品后，邀请者可获得的分佣比例；">高级会员下线提成比例</label>
+                            <div class="unit">%</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="user_v_c_p" required lay-verify="required"
+                                       oninput="if(value>100)value=100;if(value<0)value=0"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">每月结算时间</label>
+                            <div class="unit">号</div>
+                            <div class="layui-input-block">
+                                <input type="number" name="settlement_date" required lay-verify="required"
+                                       oninput="if(value>31)value=31;if(value<1)value=1"
+
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block" style="margin:0 30px;text-align: right">
+                                <button lay-submit lay-filter="submit" class="layui-btn">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        let $ = layui.$;
+        let form = layui.form;
+        let layer = layui.layer;
+        let tips = null;
+        $(".layui-form-label").hover(function () {
+            tips = layer.tips($(this).data('tip'), '#' + $(this).attr('id'), {
+                tips: 4, time: 0
+            });
+        }, function () {
+            if (tips) {
+                layer.close(tips)
+            }
+        });
+        $("#desc").hover(function () {
+            tips = layer.tips('会员返佣比例：平台会员购买平台商品获得的返佣比例；\n' +
+                '非高级会员返佣比例：平台会员申请成为高级会员但不是高级会员之前购买平台商品获得的返佣比例；\n' +
+                '高级会员返佣比例：平台高级会员购买平台商品后获得的返佣比例；\n' +
+                '高级会员分享所获返佣比例：平台高级会员分享平台商品链接给到非平台会员购买后，高级会员获得的返佣比例；\n' +
+                '上级高级会员返佣比例：平台高级会员邀请另一个高级会员成为下线后，下线购买商品后，邀请者可获得的分佣比例；\n' +
+                '备注：非高级会员分享商品给非平台会员购买后，不获得返佣；\n', '#desc', {
+                tips: 3, time: 0
+            });
+        }, function () {
+            if (tips) {
+                layer.close(tips)
+            }
+        });
+        let url = '/god/commission_rate';
+        $.get(url, function (res) {
+            console.log(res);
+            for (let k in res.data) {
+                $('#form [name="' + k + '"]').val(res.data[k]);
+            }
+        });
+        form.on('submit(submit)', function (data) {
+            let formData = new FormData(document.forms['form']);
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp.code === 0) {
+                        layer.msg(resp.msg, {icon: 1});
+                    } else {
+                        layer.msg(resp.msg, {icon: 2});
+                    }
+                },
+                error: function (resp) {
+                    console.log(resp)
+                }
+            });
+            return false;
+        });
+    });
+</script>

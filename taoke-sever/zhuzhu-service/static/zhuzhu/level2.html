@@ -1,0 +1,124 @@
+<link rel="stylesheet" href="//layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css?v=201811010202">
+
+<div class="iframe-main">
+
+    <div class="layui-col-md12">
+        <!--数据表格开始-->
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-tab-item layui-show">
+                    <div id="toolbar">
+                        <button id="refresh-btn" class="layui-btn">刷新 <i class="layui-icon">&#xe669;</i></button>
+                        <button id="add-btn" class="layui-btn layui-btn-normal">添加 <i class="layui-icon">&#xe654;</i>
+                        </button>
+                        <button id="del-btn" disabled="disabled"
+                                class="must-select layui-btn layui-btn-danger layui-btn-disabled">
+                            删除 <i class="layui-icon">&#xe640;</i>
+                        </button>
+                    </div>
+                    <table id="table"></table>
+                </div>
+            </div>
+        </div>
+        <!--数据表格结束-->
+    </div>
+    <div id="model" style="display: none;padding:20px 50px 0 10px">
+        <form id="form" class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" class="layui-input" title="id">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属一级类目</label>
+                <div class="layui-input-block">
+                    <select id="pid_select" name="pid" lay-search="" lay-filter="pid_select">
+                        <option value="">选择一级类目</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" required lay-verify="required"
+                           class="layui-input" autofocus="autofocus">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">关键字</label>
+                <div class="layui-input-block">
+                    <input type="text" name="key" required lay-verify="required"
+                           class="layui-input" autofocus="autofocus">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">图标</label>
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" id="img">
+                        <i class="layui-icon">&#xe67c;</i>上传图标
+                    </button>
+                    <input type="text" name="img" class="layui-input layui-hide">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit lay-filter="submit" class="layui-btn">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script type="text/javascript" src="//layui.hcwl520.com.cn/layui-v2.4.5/layui.js?v=201811010202"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+
+<script>
+    layui.use(['table', 'form', 'upload'], function () {
+        let $ = layui.$;
+        let layer = layui.layer;
+        let form = layui.form;
+        let table = layui.table;
+        let upload = layui.upload;
+
+        let dic = {
+            id: 'table',
+            elem: '#table',
+            url: '/god/level_two',
+            limit: 15,
+            page: true,
+            limits: [10, 15, 30, 50, 100],
+            cols: [[
+                {type: 'checkbox', width: 40, fixed: 'left'},
+                {field: 'id', title: 'id', width: 220, align: 'center',},
+                {field: 'pid_name', title: '所属类目', align: 'center'},
+                {field: 'name', title: '类目名称', align: 'center'},
+                {
+                    field: 'key', title: '搜索关键字', align: 'center', templet: function (d) {
+                        return d.key || d.pid_name + " " + d.name;
+                    }
+                },
+                {
+                    field: 'img', title: '图标', align: 'center', templet: function (d) {
+                        return '<img style="height:28px" src="' + (d.img || 'http://file.17gwx.com/sqkb/element/2018/09/15/146435b9cc1b1c21ed.jpg') + '" alt="' + d.name + '">'
+                    }
+                },
+                {
+                    title: '', width: 98, fixed: 'right', type: 'button', templet: function (d) {
+                        return "<button data-item='" + JSON.stringify(d) + "' class='layui-btn layui-btn-sm edit-btn'>编辑</button>";
+                    }
+                }
+            ]],
+            done: function () {
+                update_button($, table);
+            }
+        };
+
+        title = '二级类目';
+        url = '/god/level_two';
+        init($, layer, form, table, upload, dic);
+        let instance = table.render(dic);
+    });
+</script>

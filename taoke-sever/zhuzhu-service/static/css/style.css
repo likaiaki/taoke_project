@@ -1,0 +1,10 @@
+.iframe-main {
+    padding: 7px 7px;
+}
+
+
+.float-preview {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+}
